@@ -53,7 +53,7 @@ export function TitleScreen({ title, subtitle, onStart }: Props) {
         召開審判
       </motion.button>
       <p className="mt-10 text-[11px] tracking-wider text-[var(--iron)]">
-        原創短案 · 類型致敬 · 非原作內容
+        粉絲向短案 · 角色名取自原作 · 劇情非本篇
       </p>
     </section>
   )

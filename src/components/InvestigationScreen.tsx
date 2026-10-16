@@ -9,9 +9,9 @@ const spots: { id: TrialGame['caseData']['evidence'][number]['id']; label: strin
   [
     { id: 'watch-log', label: '守衛室', spot: 'left-[8%] top-[22%]' },
     { id: 'handkerchief', label: '祈禱堂', spot: 'left-[42%] top-[18%]' },
-    { id: 'frost-scratch', label: '東窗外側', spot: 'right-[10%] top-[28%]' },
+    { id: 'window-scorch', label: '東窗外側', spot: 'right-[10%] top-[28%]' },
     { id: 'boot-prints', label: '中庭', spot: 'left-[28%] top-[58%]' },
-    { id: 'water-flask', label: '澪的牢房', spot: 'right-[22%] top-[62%]' },
+    { id: 'water-flask', label: '蕾雅的牢房', spot: 'right-[22%] top-[62%]' },
     { id: 'chapel-ash', label: '燭架', spot: 'left-[55%] top-[48%]' },
   ]
 

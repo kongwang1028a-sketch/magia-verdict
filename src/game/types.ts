@@ -9,12 +9,12 @@ export type Phase =
 export type EvidenceId =
   | 'watch-log'
   | 'handkerchief'
-  | 'frost-scratch'
+  | 'window-scorch'
   | 'boot-prints'
   | 'water-flask'
   | 'chapel-ash'
 
-export type SuspectId = 'kaori' | 'mio' | 'yuki' | 'karasu'
+export type SuspectId = 'meruru' | 'reia' | 'arisa' | 'anan'
 
 export interface Evidence {
   id: EvidenceId
