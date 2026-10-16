@@ -39,7 +39,7 @@ export function TitleScreen({ title, subtitle, onStart }: Props) {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.7, duration: 0.8 }}
       >
-        撕開謊言，指出矛盾，把混入少女之中的魔女送上審判台。
+        與櫻羽艾瑪、二階堂希羅一同走過日常、慘案、搜索與審判。
       </motion.p>
       <motion.button
         type="button"

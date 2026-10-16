@@ -1,9 +1,11 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { AccusationScreen } from './components/AccusationScreen'
 import { Atmosphere } from './components/Atmosphere'
-import { BriefingScreen } from './components/BriefingScreen'
+import { DailyScreen } from './components/DailyScreen'
 import { EndingScreen } from './components/EndingScreen'
+import { IncidentScreen } from './components/IncidentScreen'
 import { InvestigationScreen } from './components/InvestigationScreen'
+import { PrologueScreen } from './components/PrologueScreen'
 import { TitleScreen } from './components/TitleScreen'
 import { TrialScreen } from './components/TrialScreen'
 import { useTrialGame } from './game/useTrialGame'
@@ -27,12 +29,12 @@ export default function App() {
             <TitleScreen
               title={caseData.title}
               subtitle={caseData.subtitle}
-              onStart={game.startBriefing}
+              onStart={game.startPrologue}
             />
           )}
-          {phase === 'briefing' && (
-            <BriefingScreen caseData={caseData} onContinue={game.startInvestigation} />
-          )}
+          {phase === 'prologue' && <PrologueScreen game={game} />}
+          {phase === 'daily' && <DailyScreen game={game} />}
+          {phase === 'incident' && <IncidentScreen game={game} />}
           {phase === 'investigation' && <InvestigationScreen game={game} />}
           {phase === 'trial' && <TrialScreen game={game} />}
           {phase === 'accusation' && <AccusationScreen game={game} />}

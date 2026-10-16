@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { DialogueBox } from './DialogueBox'
 import type { TrialGame } from '../game/useTrialGame'
 
 interface Props {
@@ -9,6 +11,9 @@ export function EndingScreen({ game }: Props) {
   const { caseData, won, accusedId, failedByMistakes, reset } = game
   const accused = caseData.suspects.find((s) => s.id === accusedId)
   const witch = caseData.suspects.find((s) => s.id === caseData.witchId)
+  const lines = won ? caseData.endingTruth : caseData.endingWrong
+  const [lineIndex, setLineIndex] = useState(0)
+  const finished = lineIndex >= lines.length - 1
 
   return (
     <section className="relative mx-auto flex min-h-dvh max-w-3xl flex-col justify-center px-5 py-14 sm:px-8">
@@ -27,7 +32,7 @@ export function EndingScreen({ game }: Props) {
 
         {!failedByMistakes && accused && (
           <p className="mt-4 text-sm text-[var(--parchment-dim)]">
-            你指認了{' '}
+            艾瑪與希羅指認了{' '}
             <span style={{ color: accused.color }} className="font-medium">
               {accused.name}
             </span>
@@ -35,11 +40,19 @@ export function EndingScreen({ game }: Props) {
           </p>
         )}
 
-        <p className="mt-5 text-sm leading-8 text-[color-mix(in_srgb,var(--parchment)_88%,transparent)]">
-          {won ? caseData.endingTruth : caseData.endingWrong}
-        </p>
+        <div className="mt-6">
+          <DialogueBox
+            lines={lines}
+            index={lineIndex}
+            caseData={caseData}
+            onNext={() => {
+              if (!finished) setLineIndex((i) => i + 1)
+            }}
+            footerHint={finished ? '結局對話結束' : '點擊繼續 ▶'}
+          />
+        </div>
 
-        {!won && witch && (
+        {!won && witch && finished && (
           <p className="mt-4 border-t border-[color-mix(in_srgb,var(--iron)_40%,transparent)] pt-4 text-sm text-[var(--parchment-dim)]">
             真正的魔女是{' '}
             <span style={{ color: witch.color }} className="font-medium">
@@ -49,13 +62,15 @@ export function EndingScreen({ game }: Props) {
           </p>
         )}
 
-        <button
-          type="button"
-          onClick={reset}
-          className="mt-8 bg-[var(--blood)] px-8 py-3 text-sm tracking-[0.18em] transition hover:bg-[var(--blood-bright)]"
-        >
-          再審一次
-        </button>
+        {finished && (
+          <button
+            type="button"
+            onClick={reset}
+            className="mt-8 bg-[var(--blood)] px-8 py-3 text-sm tracking-[0.18em] transition hover:bg-[var(--blood-bright)]"
+          >
+            再審一次
+          </button>
+        )}
       </motion.div>
     </section>
   )

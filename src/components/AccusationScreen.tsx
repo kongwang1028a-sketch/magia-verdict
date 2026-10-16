@@ -7,6 +7,8 @@ interface Props {
 
 export function AccusationScreen({ game }: Props) {
   const { caseData, accuse } = game
+  const ema = caseData.cast.find((c) => c.id === 'ema')
+  const hiro = caseData.cast.find((c) => c.id === 'hiro')
 
   return (
     <section className="relative mx-auto flex min-h-dvh max-w-4xl flex-col justify-center px-4 py-12 sm:px-6">
@@ -22,7 +24,10 @@ export function AccusationScreen({ game }: Props) {
           指認魔女
         </h2>
         <p className="mt-3 max-w-2xl text-sm leading-7 text-[var(--parchment-dim)]">
-          謊言已被撕開。現在，選出你認定的兇手。選錯，審判失敗。
+          <span style={{ color: hiro?.color }}>希羅</span>
+          ：把票投給證據指向的那個人。
+          <span style={{ color: ema?.color }}> 艾瑪</span>
+          ：……我選好了。為了漢娜小姐。
         </p>
       </motion.div>
 
@@ -47,7 +52,10 @@ export function AccusationScreen({ game }: Props) {
               />
               <div>
                 <p className="text-xs text-[var(--iron)]">{s.title}</p>
-                <p className="font-[family-name:var(--font-serif)] text-lg font-bold" style={{ color: s.color }}>
+                <p
+                  className="font-[family-name:var(--font-serif)] text-lg font-bold"
+                  style={{ color: s.color }}
+                >
                   {s.name}
                 </p>
               </div>
@@ -55,7 +63,7 @@ export function AccusationScreen({ game }: Props) {
             <p className="mt-3 text-xs tracking-wider text-[var(--candle-dim)]">魔法：{s.magic}</p>
             <p className="mt-2 text-sm leading-6 text-[var(--parchment-dim)]">{s.blurb}</p>
             <p className="mt-4 text-xs tracking-[0.2em] text-[var(--blood-bright)] opacity-0 transition group-hover:opacity-100">
-              投票處刑 →
+              與希羅一同投票 →
             </p>
           </motion.button>
         ))}
