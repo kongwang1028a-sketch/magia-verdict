@@ -1,12 +1,12 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { DialogueBox } from './DialogueBox'
-import type { TrialGame } from '../game/useTrialGame'
+import type { LoadedTrialGame } from '../game/useTrialGame'
 
 interface Props {
-  game: TrialGame
+  game: LoadedTrialGame
 }
 
-const spots: { id: TrialGame['caseData']['evidence'][number]['id']; label: string; spot: string }[] =
+const spots: { id: LoadedTrialGame['caseData']['evidence'][number]['id']; label: string; spot: string }[] =
   [
     { id: 'watch-log', label: '守衛室', spot: 'left-[16%] top-[24%]' },
     { id: 'handkerchief', label: '祈禱堂', spot: 'left-[50%] top-[22%]' },

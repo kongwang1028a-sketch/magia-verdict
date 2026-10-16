@@ -1,9 +1,10 @@
-import { useCallback, useMemo, useState } from 'react'
-import { caseOne } from '../data/case'
-import type { EvidenceId, Phase, SuspectId } from './types'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { loadCase } from '../data/loadCase'
+import type { CaseData, EvidenceId, Phase, SuspectId } from './types'
 
 export function useTrialGame() {
-  const caseData = caseOne
+  const [caseData, setCaseData] = useState<CaseData | null>(null)
+  const [loadError, setLoadError] = useState<string | null>(null)
   const [phase, setPhase] = useState<Phase>('title')
   const [dialogueIndex, setDialogueIndex] = useState(0)
   const [visitedDaily, setVisitedDaily] = useState<Set<string>>(new Set())
@@ -24,12 +25,27 @@ export function useTrialGame() {
   const [pendingDiscover, setPendingDiscover] = useState(false)
   const [gateLines, setGateLines] = useState<'none' | 'invest' | 'trial'>('none')
 
-  const currentStatement = caseData.statements[statementIndex]
-  const allBroken = brokenIds.size >= caseData.statements.length
-  const livesLeft = caseData.maxMistakes - mistakes
-  const failedByMistakes = mistakes >= caseData.maxMistakes
+  useEffect(() => {
+    let alive = true
+    loadCase()
+      .then((data) => {
+        if (alive) setCaseData(data)
+      })
+      .catch((err: unknown) => {
+        if (alive) setLoadError(err instanceof Error ? err.message : '劇本載入失敗')
+      })
+    return () => {
+      alive = false
+    }
+  }, [])
+
+  const currentStatement = caseData?.statements[statementIndex]
+  const allBroken = caseData ? brokenIds.size >= caseData.statements.length : false
+  const livesLeft = caseData ? caseData.maxMistakes - mistakes : 0
+  const failedByMistakes = caseData ? mistakes >= caseData.maxMistakes : false
 
   const progress = useMemo(() => {
+    if (!caseData) return 0
     if (phase === 'daily') {
       return Math.round((visitedDaily.size / caseData.dailyScenes.length) * 100)
     }
@@ -41,13 +57,11 @@ export function useTrialGame() {
     }
     return 0
   }, [
+    caseData,
     phase,
     visitedDaily.size,
     collected.size,
     brokenIds.size,
-    caseData.dailyScenes.length,
-    caseData.evidence.length,
-    caseData.statements.length,
   ])
 
   const reset = useCallback(() => {
@@ -75,6 +89,7 @@ export function useTrialGame() {
   }, [])
 
   const advanceDialogue = useCallback(() => {
+    if (!caseData) return
     if (phase === 'prologue') {
       if (dialogueIndex < caseData.prologue.length - 1) {
         setDialogueIndex((i) => i + 1)
@@ -103,7 +118,7 @@ export function useTrialGame() {
         setDialogueIndex((i) => i + 1)
       }
     }
-  }, [phase, dialogueIndex, caseData, activeDailyId])
+  }, [caseData, phase, dialogueIndex, activeDailyId])
 
   const openDailyScene = useCallback((id: string) => {
     setActiveDailyId(id)
@@ -122,12 +137,14 @@ export function useTrialGame() {
   }, [activeDailyId])
 
   const finishDaily = useCallback(() => {
+    if (!caseData) return
     if (visitedDaily.size < caseData.dailyScenes.length) return
     setDialogueIndex(0)
     setPhase('incident')
-  }, [visitedDaily.size, caseData.dailyScenes.length])
+  }, [caseData, visitedDaily.size])
 
   const dismissGate = useCallback(() => {
+    if (!caseData) return
     const lines =
       gateLines === 'invest'
         ? caseData.investigationIntro
@@ -140,23 +157,21 @@ export function useTrialGame() {
     }
     setGateLines('none')
     setDialogueIndex(0)
-  }, [gateLines, dialogueIndex, caseData.investigationIntro, caseData.trialIntro])
+  }, [caseData, gateLines, dialogueIndex])
 
-  const collectEvidence = useCallback(
-    (id: EvidenceId) => {
-      setCollected((prev) => {
-        const next = new Set(prev)
-        next.add(id)
-        return next
-      })
-      setInspectId(id)
-      setDialogueIndex(0)
-      setPendingDiscover(true)
-    },
-    [],
-  )
+  const collectEvidence = useCallback((id: EvidenceId) => {
+    setCollected((prev) => {
+      const next = new Set(prev)
+      next.add(id)
+      return next
+    })
+    setInspectId(id)
+    setDialogueIndex(0)
+    setPendingDiscover(true)
+  }, [])
 
   const closeInspect = useCallback(() => {
+    if (!caseData) return
     const ev = caseData.evidence.find((e) => e.id === inspectId)
     if (pendingDiscover && ev && dialogueIndex < ev.discoverLines.length - 1) {
       setDialogueIndex((i) => i + 1)
@@ -165,9 +180,10 @@ export function useTrialGame() {
     setPendingDiscover(false)
     setInspectId(null)
     setDialogueIndex(0)
-  }, [caseData.evidence, inspectId, pendingDiscover, dialogueIndex])
+  }, [caseData, inspectId, pendingDiscover, dialogueIndex])
 
   const beginTrial = useCallback(() => {
+    if (!caseData) return
     if (collected.size < caseData.evidence.length) {
       setFeedback({
         kind: 'info',
@@ -181,10 +197,11 @@ export function useTrialGame() {
     setStatementIndex(0)
     setRevealLineIndex(0)
     setPhase('trial')
-  }, [collected.size, caseData.evidence.length])
+  }, [caseData, collected.size])
 
   const attemptBreak = useCallback(() => {
-    if (!currentStatement || !selectedEvidence) {
+    if (!caseData || !currentStatement) return
+    if (!selectedEvidence) {
       setFeedback({ kind: 'info', text: '艾瑪：先選證據，再喊異議！' })
       return
     }
@@ -209,16 +226,10 @@ export function useTrialGame() {
         setPhase('ending')
       }
     }
-  }, [
-    currentStatement,
-    selectedEvidence,
-    brokenIds,
-    mistakes,
-    caseData.maxMistakes,
-  ])
+  }, [caseData, currentStatement, selectedEvidence, brokenIds, mistakes])
 
   const advanceAfterBreak = useCallback(() => {
-    if (!currentStatement || !brokenIds.has(currentStatement.id)) return
+    if (!caseData || !currentStatement || !brokenIds.has(currentStatement.id)) return
     const reveal = currentStatement.reveal
     if (revealLineIndex < reveal.length - 1) {
       setRevealLineIndex((i) => i + 1)
@@ -233,21 +244,23 @@ export function useTrialGame() {
     setFeedback(null)
     setRevealLineIndex(0)
     setStatementIndex((i) => Math.min(i + 1, caseData.statements.length - 1))
-  }, [currentStatement, brokenIds, revealLineIndex, caseData.statements.length])
+  }, [caseData, currentStatement, brokenIds, revealLineIndex])
 
   const accuse = useCallback(
     (id: SuspectId) => {
+      if (!caseData) return
       setAccusedId(id)
       const success = id === caseData.witchId
       setWon(success)
       setDialogueIndex(0)
       setPhase('ending')
     },
-    [caseData.witchId],
+    [caseData],
   )
 
   return {
     caseData,
+    loadError,
     phase,
     dialogueIndex,
     visitedDaily,
@@ -288,3 +301,4 @@ export function useTrialGame() {
 }
 
 export type TrialGame = ReturnType<typeof useTrialGame>
+export type LoadedTrialGame = Omit<TrialGame, 'caseData'> & { caseData: CaseData }

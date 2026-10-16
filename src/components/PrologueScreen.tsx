@@ -1,8 +1,8 @@
 import { DialogueBox } from './DialogueBox'
-import type { TrialGame } from '../game/useTrialGame'
+import type { LoadedTrialGame } from '../game/useTrialGame'
 
 interface Props {
-  game: TrialGame
+  game: LoadedTrialGame
 }
 
 export function PrologueScreen({ game }: Props) {

@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion'
-import type { TrialGame } from '../game/useTrialGame'
+import type { LoadedTrialGame } from '../game/useTrialGame'
 
 interface Props {
-  game: TrialGame
+  game: LoadedTrialGame
 }
 
 export function AccusationScreen({ game }: Props) {
