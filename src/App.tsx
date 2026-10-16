@@ -6,6 +6,7 @@ import { EndingScreen } from './components/EndingScreen'
 import { IncidentScreen } from './components/IncidentScreen'
 import { InvestigationScreen } from './components/InvestigationScreen'
 import { PrologueScreen } from './components/PrologueScreen'
+import { SkipChapterButton } from './components/SkipChapterButton'
 import { TitleScreen } from './components/TitleScreen'
 import { TrialScreen } from './components/TrialScreen'
 import { useTrialGame, type LoadedTrialGame } from './game/useTrialGame'
@@ -43,6 +44,11 @@ export default function App() {
   return (
     <div className="bg-chapel relative min-h-dvh overflow-x-hidden">
       <Atmosphere />
+      <SkipChapterButton
+        label={loaded.skipChapterLabel}
+        disabled={!loaded.canSkipChapter}
+        onClick={loaded.skipChapter}
+      />
       <AnimatePresence mode="wait">
         <motion.div
           key={phase}

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { DialogueBox } from './DialogueBox'
 import type { LoadedTrialGame } from '../game/useTrialGame'
@@ -8,11 +8,23 @@ interface Props {
 }
 
 export function EndingScreen({ game }: Props) {
-  const { caseData, won, accusedId, failedByMistakes, reset } = game
+  const { caseData, won, accusedId, failedByMistakes, reset, dialogueIndex, phase } = game
   const accused = caseData.suspects.find((s) => s.id === accusedId)
   const witch = caseData.suspects.find((s) => s.id === caseData.witchId)
   const lines = won ? caseData.endingTruth : caseData.endingWrong
   const [lineIndex, setLineIndex] = useState(0)
+
+  // 與全局跳過同步：skipChapter 會把 dialogueIndex 設到最後一句
+  useEffect(() => {
+    if (phase === 'ending' && dialogueIndex >= lines.length - 1 && lines.length > 0) {
+      setLineIndex(lines.length - 1)
+    }
+  }, [phase, dialogueIndex, lines.length])
+
+  useEffect(() => {
+    setLineIndex(0)
+  }, [won, accusedId])
+
   const finished = lineIndex >= lines.length - 1
 
   return (

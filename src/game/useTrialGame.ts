@@ -258,6 +258,89 @@ export function useTrialGame() {
     [caseData],
   )
 
+  const canSkipChapter =
+    phase === 'prologue' ||
+    phase === 'daily' ||
+    phase === 'incident' ||
+    phase === 'investigation' ||
+    phase === 'trial' ||
+    phase === 'ending'
+
+  const skipChapterLabel = (() => {
+    switch (phase) {
+      case 'prologue':
+        return '跳過序章'
+      case 'daily':
+        return '跳過日常'
+      case 'incident':
+        return '跳過事件'
+      case 'investigation':
+        return '跳過搜索'
+      case 'trial':
+        return '跳過審判辯論'
+      case 'ending':
+        return '跳過結局對話'
+      default:
+        return '跳過本章'
+    }
+  })()
+
+  const skipChapter = useCallback(() => {
+    if (!caseData) return
+
+    if (phase === 'prologue') {
+      setDialogueIndex(0)
+      setPhase('daily')
+      return
+    }
+
+    if (phase === 'daily') {
+      setVisitedDaily(new Set(caseData.dailyScenes.map((s) => s.id)))
+      setActiveDailyId(null)
+      setDialogueIndex(0)
+      setPhase('incident')
+      return
+    }
+
+    if (phase === 'incident') {
+      setDialogueIndex(0)
+      setGateLines('none')
+      setPhase('investigation')
+      return
+    }
+
+    if (phase === 'investigation') {
+      setCollected(new Set(caseData.evidence.map((e) => e.id)))
+      setInspectId(null)
+      setPendingDiscover(false)
+      setFeedback(null)
+      setDialogueIndex(0)
+      setGateLines('none')
+      setStatementIndex(0)
+      setRevealLineIndex(0)
+      setBrokenIds(new Set())
+      setSelectedEvidence(null)
+      setPhase('trial')
+      return
+    }
+
+    if (phase === 'trial') {
+      setGateLines('none')
+      setFeedback(null)
+      setSelectedEvidence(null)
+      setBrokenIds(new Set(caseData.statements.map((s) => s.id)))
+      setStatementIndex(Math.max(0, caseData.statements.length - 1))
+      setRevealLineIndex(0)
+      setPhase('accusation')
+      return
+    }
+
+    if (phase === 'ending') {
+      const lines = won ? caseData.endingTruth : caseData.endingWrong
+      setDialogueIndex(Math.max(0, lines.length - 1))
+    }
+  }, [caseData, phase, won])
+
   return {
     caseData,
     loadError,
@@ -282,6 +365,8 @@ export function useTrialGame() {
     inspectId,
     pendingDiscover,
     gateLines,
+    canSkipChapter,
+    skipChapterLabel,
     setSelectedEvidence,
     setFeedback,
     reset,
@@ -297,6 +382,7 @@ export function useTrialGame() {
     attemptBreak,
     advanceAfterBreak,
     accuse,
+    skipChapter,
   }
 }
 
