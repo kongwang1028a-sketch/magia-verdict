@@ -51,7 +51,7 @@ export default function App() {
       />
       <AnimatePresence mode="wait">
         <motion.div
-          key={phase}
+          key={`${game.storyId}-${phase}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -61,6 +61,9 @@ export default function App() {
             <TitleScreen
               title={caseData.title}
               subtitle={caseData.subtitle}
+              stories={game.stories}
+              activeStoryId={game.storyId}
+              onSelectStory={game.selectStory}
               onStart={game.startPrologue}
             />
           )}

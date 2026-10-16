@@ -1,4 +1,4 @@
-/** 手寫粉絲向劇本：十三人全員登場。無灌水占位。劇情非本篇。 */
+/** 【封存】祈禱堂的餘燼 — 手寫粉絲向劇本：十三人全員登場。無灌水占位。劇情非本篇。 */
 export const longStory = {
   prologue: [
     { speakerId: 'narrator', text: '海霧低得像要壓塌石牆。魔女島監牢在霧裡只露出一排鐵窗，窗裡的燈一明一滅。' },
@@ -342,6 +342,8 @@ export const longStory = {
       name: '值班日誌',
       detail: '蕾雅簽到至凌晨一時，並非午夜結束；紙緣有用力按過的凹痕。',
       foundIn: '守衛室桌面',
+      mapLabel: '守衛室',
+      mapSpot: 'left-[16%] top-[24%]',
       discoverLines: [
         { speakerId: 'ema', text: '寫到凌晨一時……她不是說午夜結束嗎？' },
         { speakerId: 'hiro', text: '時間謊言。收好。' },
@@ -354,6 +356,8 @@ export const longStory = {
       name: '沾淚手帕',
       detail: '現場手帕與梅露露抽屜同款；抽屜邊有灰。',
       foundIn: '祈禱堂祭壇下',
+      mapLabel: '祈禱堂',
+      mapSpot: 'left-[50%] top-[22%]',
       discoverLines: [
         { speakerId: 'ema', text: '梅露露的手帕……上面有血。' },
         { speakerId: 'hiro', text: '她不會主動丟在這。像被拿走。' },
@@ -366,6 +370,8 @@ export const longStory = {
       name: '窗栓焦痕',
       detail: '外側窗栓高溫焦痕由外向內，死者無法自內側造成。',
       foundIn: '祈禱堂東窗外側',
+      mapLabel: '東窗外側',
+      mapSpot: 'left-[84%] top-[26%]',
       discoverLines: [
         { speakerId: 'hiro', text: '屋外焦痕。發火，方向由外向內。' },
         { speakerId: 'ema', text: '漢娜還提醒過窗栓……' },
@@ -378,6 +384,8 @@ export const longStory = {
       name: '中庭靴印',
       detail: '亞里沙靴印約至零時三十分中斷，東翼方向消失。',
       foundIn: '中庭地面',
+      mapLabel: '中庭',
+      mapSpot: 'left-[20%] top-[70%]',
       discoverLines: [
         { speakerId: 'ema', text: '她說整晚在中庭，足跡卻斷了。' },
         { speakerId: 'hiro', text: '「整晚」是謊。' },
@@ -390,6 +398,8 @@ export const longStory = {
       name: '稀釋血痕瓶',
       detail: '水壺內壁有被沖淡血跡；蕾雅稱清洗入口，否認殺人。',
       foundIn: '蕾雅的牢房',
+      mapLabel: '蕾雅的牢房',
+      mapSpot: 'left-[50%] top-[72%]',
       discoverLines: [
         { speakerId: 'reia', text: '門口濺血我洗過。我沒殺她。' },
         { speakerId: 'hiro', text: '殺沒殺由證據定。時間你瞞了。' },
@@ -402,6 +412,8 @@ export const longStory = {
       name: '燭台灰燼',
       detail: '燭燃近二時，案時有微光，兇手可見目標。',
       foundIn: '祈禱堂燭架',
+      mapLabel: '燭架',
+      mapSpot: 'left-[80%] top-[68%]',
       discoverLines: [
         { speakerId: 'ema', text: '不是漆黑中被襲擊。' },
         { speakerId: 'hiro', text: '兇手看得到她。' },

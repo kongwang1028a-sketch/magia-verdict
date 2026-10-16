@@ -6,16 +6,6 @@ interface Props {
   game: LoadedTrialGame
 }
 
-const spots: { id: LoadedTrialGame['caseData']['evidence'][number]['id']; label: string; spot: string }[] =
-  [
-    { id: 'watch-log', label: '守衛室', spot: 'left-[16%] top-[24%]' },
-    { id: 'handkerchief', label: '祈禱堂', spot: 'left-[50%] top-[22%]' },
-    { id: 'window-scorch', label: '東窗外側', spot: 'left-[84%] top-[26%]' },
-    { id: 'boot-prints', label: '中庭', spot: 'left-[20%] top-[70%]' },
-    { id: 'water-flask', label: '蕾雅的牢房', spot: 'left-[50%] top-[72%]' },
-    { id: 'chapel-ash', label: '燭架', spot: 'left-[80%] top-[68%]' },
-  ]
-
 export function InvestigationScreen({ game }: Props) {
   const {
     caseData,
@@ -45,7 +35,7 @@ export function InvestigationScreen({ game }: Props) {
             搜索 · 與希羅同行
           </h2>
           <p className="mt-2 max-w-xl text-sm text-[var(--parchment-dim)]">
-            點選地點取得證據。每份證據都會觸發艾瑪與希羅的討論。
+            點選地點取得證據。每份證據都會觸發討論。
           </p>
         </div>
         <p className="text-sm tracking-wider text-[var(--candle)]">
@@ -56,23 +46,23 @@ export function InvestigationScreen({ game }: Props) {
       <div className="ornament-border relative min-h-[22rem] overflow-hidden bg-[linear-gradient(160deg,#1a1014_0%,#0e080a_55%,#151018_100%)] sm:min-h-[26rem]">
         <div className="absolute inset-0 opacity-40 [background-image:radial-gradient(circle_at_30%_20%,rgba(139,30,45,0.35),transparent_40%),radial-gradient(circle_at_70%_70%,rgba(201,162,39,0.12),transparent_35%)]" />
         <p className="absolute top-4 left-4 text-[11px] tracking-[0.25em] text-[var(--iron)]">
-          東翼 · 搜證
+          搜證地圖
         </p>
-        {spots.map((spot) => {
-          const got = collected.has(spot.id)
+        {caseData.evidence.map((ev) => {
+          const got = collected.has(ev.id)
           return (
             <button
-              key={spot.id}
+              key={ev.id}
               type="button"
               disabled={showGate}
-              onClick={() => collectEvidence(spot.id)}
-              className={`absolute ${spot.spot} -translate-x-1/2 -translate-y-1/2 rounded-sm border px-3 py-2 text-left text-xs transition ${
+              onClick={() => collectEvidence(ev.id)}
+              className={`absolute ${ev.mapSpot} z-10 -translate-x-1/2 -translate-y-1/2 rounded-sm border px-3 py-2 text-left text-xs transition ${
                 got
                   ? 'border-[color-mix(in_srgb,var(--candle)_55%,transparent)] bg-[color-mix(in_srgb,var(--candle)_18%,transparent)] text-[var(--candle)]'
-                  : 'border-[color-mix(in_srgb,var(--parchment)_25%,transparent)] bg-[color-mix(in_srgb,var(--ink)_55%,transparent)] text-[var(--parchment)] hover:border-[var(--blood-bright)] hover:bg-[color-mix(in_srgb,var(--blood)_35%,transparent)]'
+                  : 'border-[color-mix(in_srgb,var(--parchment)_25%,transparent)] bg-[color-mix(in_srgb,var(--ink)_55%,transparent)] text-[var(--parchment)] hover:border-[var(--blood-bright)]'
               }`}
             >
-              <span className="block font-medium">{spot.label}</span>
+              <span className="block font-medium">{ev.mapLabel}</span>
               <span className="mt-0.5 block text-[10px] opacity-70">
                 {got ? '已取得' : '尚未搜查'}
               </span>

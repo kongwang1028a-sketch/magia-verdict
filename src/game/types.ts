@@ -8,18 +8,11 @@ export type Phase =
   | 'accusation'
   | 'ending'
 
-export type EvidenceId =
-  | 'watch-log'
-  | 'handkerchief'
-  | 'window-scorch'
-  | 'boot-prints'
-  | 'water-flask'
-  | 'chapel-ash'
-
-export type SuspectId = 'meruru' | 'reia' | 'arisa' | 'anan'
+export type EvidenceId = string
+export type SuspectId = string
 
 export type SpeakerId =
-  | SuspectId
+  | string
   | 'ema'
   | 'hiro'
   | 'hanna'
@@ -33,12 +26,18 @@ export type SpeakerId =
   | 'sherry'
   | 'coco'
   | 'yuki'
+  | 'meruru'
+  | 'reia'
+  | 'arisa'
+  | 'anan'
 
 export interface Evidence {
   id: EvidenceId
   name: string
   detail: string
   foundIn: string
+  mapLabel: string
+  mapSpot: string
   discoverLines: DialogueLine[]
 }
 
@@ -102,4 +101,13 @@ export interface CaseData {
   trialIntro: DialogueLine[]
   statements: Statement[]
   maxMistakes: number
+}
+
+export interface StoryPackInfo {
+  id: string
+  title: string
+  subtitle: string
+  blurb: string
+  /** 封存舊稿／現行稿等標籤 */
+  tag: string
 }

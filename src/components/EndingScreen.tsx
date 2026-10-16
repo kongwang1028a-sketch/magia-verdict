@@ -10,7 +10,6 @@ interface Props {
 export function EndingScreen({ game }: Props) {
   const { caseData, won, accusedId, failedByMistakes, reset, dialogueIndex, phase } = game
   const accused = caseData.suspects.find((s) => s.id === accusedId)
-  const witch = caseData.suspects.find((s) => s.id === caseData.witchId)
   const lines = won ? caseData.endingTruth : caseData.endingWrong
   const [lineIndex, setLineIndex] = useState(0)
 
@@ -63,16 +62,6 @@ export function EndingScreen({ game }: Props) {
             footerHint={finished ? '結局對話結束' : '點擊繼續 ▶'}
           />
         </div>
-
-        {!won && witch && finished && (
-          <p className="mt-4 border-t border-[color-mix(in_srgb,var(--iron)_40%,transparent)] pt-4 text-sm text-[var(--parchment-dim)]">
-            真正的魔女是{' '}
-            <span style={{ color: witch.color }} className="font-medium">
-              {witch.name}
-            </span>
-            。
-          </p>
-        )}
 
         {finished && (
           <button

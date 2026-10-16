@@ -1,8 +1,20 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { loadCase } from '../data/loadCase'
+import { DEFAULT_STORY_ID, STORY_CATALOG, STORY_STORAGE_KEY } from '../data/stories/catalog'
 import type { CaseData, EvidenceId, Phase, SuspectId } from './types'
 
+function readStoredStoryId(): string {
+  try {
+    const id = localStorage.getItem(STORY_STORAGE_KEY)
+    if (id && STORY_CATALOG.some((s) => s.id === id)) return id
+  } catch {
+    /* ignore */
+  }
+  return DEFAULT_STORY_ID
+}
+
 export function useTrialGame() {
+  const [storyId, setStoryId] = useState<string>(DEFAULT_STORY_ID)
   const [caseData, setCaseData] = useState<CaseData | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [phase, setPhase] = useState<Phase>('title')
@@ -26,8 +38,33 @@ export function useTrialGame() {
   const [gateLines, setGateLines] = useState<'none' | 'invest' | 'trial'>('none')
 
   useEffect(() => {
+    setStoryId(readStoredStoryId())
+  }, [])
+
+  const clearProgress = useCallback(() => {
+    setPhase('title')
+    setDialogueIndex(0)
+    setVisitedDaily(new Set())
+    setActiveDailyId(null)
+    setCollected(new Set())
+    setStatementIndex(0)
+    setBrokenIds(new Set())
+    setMistakes(0)
+    setSelectedEvidence(null)
+    setFeedback(null)
+    setRevealLineIndex(0)
+    setAccusedId(null)
+    setWon(false)
+    setInspectId(null)
+    setPendingDiscover(false)
+    setGateLines('none')
+  }, [])
+
+  useEffect(() => {
     let alive = true
-    loadCase()
+    setCaseData(null)
+    setLoadError(null)
+    loadCase(storyId)
       .then((data) => {
         if (alive) setCaseData(data)
       })
@@ -37,7 +74,21 @@ export function useTrialGame() {
     return () => {
       alive = false
     }
-  }, [])
+  }, [storyId])
+
+  const selectStory = useCallback(
+    (id: string) => {
+      if (!STORY_CATALOG.some((s) => s.id === id)) return
+      try {
+        localStorage.setItem(STORY_STORAGE_KEY, id)
+      } catch {
+        /* ignore */
+      }
+      clearProgress()
+      setStoryId(id)
+    },
+    [clearProgress],
+  )
 
   const currentStatement = caseData?.statements[statementIndex]
   const allBroken = caseData ? brokenIds.size >= caseData.statements.length : false
@@ -65,23 +116,8 @@ export function useTrialGame() {
   ])
 
   const reset = useCallback(() => {
-    setPhase('title')
-    setDialogueIndex(0)
-    setVisitedDaily(new Set())
-    setActiveDailyId(null)
-    setCollected(new Set())
-    setStatementIndex(0)
-    setBrokenIds(new Set())
-    setMistakes(0)
-    setSelectedEvidence(null)
-    setFeedback(null)
-    setRevealLineIndex(0)
-    setAccusedId(null)
-    setWon(false)
-    setInspectId(null)
-    setPendingDiscover(false)
-    setGateLines('none')
-  }, [])
+    clearProgress()
+  }, [clearProgress])
 
   const startPrologue = useCallback(() => {
     setDialogueIndex(0)
@@ -342,6 +378,9 @@ export function useTrialGame() {
   }, [caseData, phase, won])
 
   return {
+    storyId,
+    stories: STORY_CATALOG,
+    selectStory,
     caseData,
     loadError,
     phase,
