@@ -26,13 +26,19 @@ export type SpeakerId =
   | 'owl'
   | 'narrator'
   | 'system'
+  | 'noa'
+  | 'miria'
+  | 'margo'
+  | 'nanoka'
+  | 'sherry'
+  | 'coco'
+  | 'yuki'
 
 export interface Evidence {
   id: EvidenceId
   name: string
   detail: string
   foundIn: string
-  /** 取得證物時艾瑪／希羅的對話 */
   discoverLines: DialogueLine[]
 }
 
@@ -71,10 +77,8 @@ export interface Statement {
   speakerId: SuspectId
   text: string
   correctEvidenceId: EvidenceId
-  /** 正確異議後的辯論收束 */
   reveal: DialogueLine[]
   wrongHint: string
-  /** 該輪開始前的鋪陳對話 */
   intro: DialogueLine[]
 }
 
