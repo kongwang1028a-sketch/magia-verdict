@@ -50,7 +50,7 @@ export function DailyScreen({ game }: Props) {
               key={scene.id}
               type="button"
               onClick={() => openDailyScene(scene.id)}
-              className={`absolute ${scene.spot} -translate-x-1/2 -translate-y-1/2 rounded-sm border px-3 py-2 text-left text-xs transition ${
+              className={`absolute ${scene.spot} z-10 -translate-x-1/2 -translate-y-1/2 rounded-sm border px-3 py-2 text-left text-xs transition ${
                 done
                   ? 'border-[color-mix(in_srgb,var(--candle)_50%,transparent)] bg-[color-mix(in_srgb,var(--candle)_14%,transparent)] text-[var(--candle)]'
                   : 'border-[color-mix(in_srgb,var(--parchment)_25%,transparent)] bg-[color-mix(in_srgb,var(--ink)_55%,transparent)] text-[var(--parchment)] hover:border-[var(--blood-bright)]'
@@ -59,6 +59,29 @@ export function DailyScreen({ game }: Props) {
               <span className="block font-medium">{scene.place}</span>
               <span className="mt-0.5 block text-[10px] opacity-75">
                 {done ? '已聽完' : scene.summary}
+              </span>
+            </button>
+          )
+        })}
+      </div>
+
+      <div className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        {caseData.dailyScenes.map((scene) => {
+          const done = visitedDaily.has(scene.id)
+          return (
+            <button
+              key={`list-${scene.id}`}
+              type="button"
+              onClick={() => openDailyScene(scene.id)}
+              className={`border px-3 py-3 text-left text-sm transition ${
+                done
+                  ? 'border-[color-mix(in_srgb,var(--candle)_45%,transparent)] text-[var(--candle)]'
+                  : 'border-[color-mix(in_srgb,var(--parchment)_20%,transparent)] hover:border-[var(--blood-bright)]'
+              }`}
+            >
+              <span className="font-[family-name:var(--font-serif)] font-medium">{scene.place}</span>
+              <span className="mt-1 block text-xs text-[var(--iron)]">
+                {done ? '已聽完' : scene.title}
               </span>
             </button>
           )

@@ -97,7 +97,7 @@ export const caseOne: CaseData = {
       title: '食堂的閒話',
       place: '食堂',
       summary: '與漢娜、梅露露一道用早餐',
-      spot: 'left-[12%] top-[30%]',
+      spot: 'left-[18%] top-[28%]',
       lines: [
         {
           speakerId: 'hanna',
@@ -134,7 +134,7 @@ export const caseOne: CaseData = {
       title: '中庭的火花',
       place: '中庭',
       summary: '亞里沙練發火，安安在角落素描',
-      spot: 'right-[18%] top-[28%]',
+      spot: 'left-[72%] top-[28%]',
       lines: [
         {
           speakerId: 'arisa',
@@ -171,7 +171,7 @@ export const caseOne: CaseData = {
       title: '查勤的約定',
       place: '守衛室前',
       summary: '蕾雅接下今夜夜勤',
-      spot: 'left-[40%] top-[58%]',
+      spot: 'left-[22%] top-[68%]',
       lines: [
         {
           speakerId: 'reia',
@@ -208,7 +208,7 @@ export const caseOne: CaseData = {
       title: '祈禱堂的午後',
       place: '東翼祈禱堂',
       summary: '漢娜邀艾瑪「今晚再來」',
-      spot: 'right-[38%] top-[62%]',
+      spot: 'left-[70%] top-[68%]',
       lines: [
         {
           speakerId: 'hanna',

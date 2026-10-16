@@ -8,12 +8,12 @@ interface Props {
 
 const spots: { id: TrialGame['caseData']['evidence'][number]['id']; label: string; spot: string }[] =
   [
-    { id: 'watch-log', label: '守衛室', spot: 'left-[8%] top-[22%]' },
-    { id: 'handkerchief', label: '祈禱堂', spot: 'left-[42%] top-[18%]' },
-    { id: 'window-scorch', label: '東窗外側', spot: 'right-[10%] top-[28%]' },
-    { id: 'boot-prints', label: '中庭', spot: 'left-[28%] top-[58%]' },
-    { id: 'water-flask', label: '蕾雅的牢房', spot: 'right-[22%] top-[62%]' },
-    { id: 'chapel-ash', label: '燭架', spot: 'left-[55%] top-[48%]' },
+    { id: 'watch-log', label: '守衛室', spot: 'left-[16%] top-[24%]' },
+    { id: 'handkerchief', label: '祈禱堂', spot: 'left-[50%] top-[22%]' },
+    { id: 'window-scorch', label: '東窗外側', spot: 'left-[84%] top-[26%]' },
+    { id: 'boot-prints', label: '中庭', spot: 'left-[20%] top-[70%]' },
+    { id: 'water-flask', label: '蕾雅的牢房', spot: 'left-[50%] top-[72%]' },
+    { id: 'chapel-ash', label: '燭架', spot: 'left-[80%] top-[68%]' },
   ]
 
 export function InvestigationScreen({ game }: Props) {
