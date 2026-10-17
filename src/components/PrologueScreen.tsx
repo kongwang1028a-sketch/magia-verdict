@@ -15,10 +15,10 @@ export function PrologueScreen({ game }: Props) {
           PROLOGUE
         </p>
         <h2 className="mt-2 font-[family-name:var(--font-serif)] text-2xl font-bold sm:text-3xl">
-          魔女島的早晨
+          序章 · 醒來的十三人
         </h2>
         <p className="mt-2 text-sm text-[var(--parchment-dim)]">
-          櫻羽艾瑪與二階堂希羅——這一審，由你們揭開謊言。
+          監獄島的第一個早晨——她們先認識彼此，才談得上之後的審判。
         </p>
       </div>
       <DialogueBox

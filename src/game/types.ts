@@ -7,6 +7,7 @@ export type Phase =
   | 'trial'
   | 'accusation'
   | 'ending'
+  | 'epilogue'
 
 export type EvidenceId = string
 export type SuspectId = string
@@ -79,9 +80,12 @@ export interface CaseData {
   witchId: SuspectId
   endingTruth: DialogueLine[]
   endingWrong: DialogueLine[]
+  /** 正解後：眾人如何收拾殘局、繼續活下去 */
+  epilogue: DialogueLine[]
   evidence: Evidence[]
   suspects: Suspect[]
   cast: Character[]
+  /** 醒來、抵達、十三人初識 */
   prologue: DialogueLine[]
   dailyScenes: DailyScene[]
   /** 日常最多可探訪幾場（含 key） */

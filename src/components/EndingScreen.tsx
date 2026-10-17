@@ -8,12 +8,21 @@ interface Props {
 }
 
 export function EndingScreen({ game }: Props) {
-  const { caseData, won, accusedId, failedByMistakes, reset, dialogueIndex, phase } = game
+  const {
+    caseData,
+    won,
+    accusedId,
+    failedByMistakes,
+    reset,
+    dialogueIndex,
+    phase,
+    startEpilogue,
+  } = game
   const accused = caseData.suspects.find((s) => s.id === accusedId)
   const lines = won ? caseData.endingTruth : caseData.endingWrong
   const [lineIndex, setLineIndex] = useState(0)
+  const hasEpilogue = won && caseData.epilogue.length > 0
 
-  // 與全局跳過同步：skipChapter 會把 dialogueIndex 設到最後一句
   useEffect(() => {
     if (phase === 'ending' && dialogueIndex >= lines.length - 1 && lines.length > 0) {
       setLineIndex(lines.length - 1)
@@ -24,7 +33,7 @@ export function EndingScreen({ game }: Props) {
     setLineIndex(0)
   }, [won, accusedId])
 
-  const finished = lineIndex >= lines.length - 1
+  const finished = lines.length === 0 || lineIndex >= lines.length - 1
 
   return (
     <section className="relative mx-auto flex min-h-dvh max-w-3xl flex-col justify-center px-5 py-14 sm:px-8">
@@ -64,13 +73,25 @@ export function EndingScreen({ game }: Props) {
         </div>
 
         {finished && (
-          <button
-            type="button"
-            onClick={reset}
-            className="mt-8 bg-[var(--blood)] px-8 py-3 text-sm tracking-[0.18em] transition hover:bg-[var(--blood-bright)]"
-          >
-            再審一次
-          </button>
+          <div className="mt-8 flex flex-wrap gap-3">
+            {hasEpilogue ? (
+              <button
+                type="button"
+                onClick={startEpilogue}
+                className="bg-[var(--blood)] px-8 py-3 text-sm tracking-[0.18em] transition hover:bg-[var(--blood-bright)]"
+              >
+                進入終章 ▶
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={reset}
+                className="bg-[var(--blood)] px-8 py-3 text-sm tracking-[0.18em] transition hover:bg-[var(--blood-bright)]"
+              >
+                再審一次
+              </button>
+            )}
+          </div>
         )}
       </motion.div>
     </section>

@@ -177,6 +177,13 @@ export function useTrialGame() {
       return
     }
 
+    if (phase === 'epilogue') {
+      if (dialogueIndex < caseData.epilogue.length - 1) {
+        setDialogueIndex((i) => i + 1)
+      }
+      return
+    }
+
     if (activeDailyId) {
       const scene = caseData.dailyScenes.find((s) => s.id === activeDailyId)
       if (!scene) return
@@ -185,6 +192,12 @@ export function useTrialGame() {
       }
     }
   }, [caseData, phase, dialogueIndex, activeDailyId])
+
+  const startEpilogue = useCallback(() => {
+    if (!caseData || caseData.epilogue.length === 0) return
+    setDialogueIndex(0)
+    setPhase('epilogue')
+  }, [caseData])
 
   const openDailyScene = useCallback(
     (id: string) => {
@@ -398,7 +411,8 @@ export function useTrialGame() {
     phase === 'incident' ||
     phase === 'investigation' ||
     phase === 'trial' ||
-    phase === 'ending'
+    phase === 'ending' ||
+    phase === 'epilogue'
 
   const skipChapterLabel = (() => {
     switch (phase) {
@@ -414,6 +428,8 @@ export function useTrialGame() {
         return '跳過審判辯論'
       case 'ending':
         return '跳過結局對話'
+      case 'epilogue':
+        return '跳過終章'
       default:
         return '跳過本章'
     }
@@ -498,8 +514,18 @@ export function useTrialGame() {
     }
 
     if (phase === 'ending') {
-      const lines = won ? caseData.endingTruth : caseData.endingWrong
+      if (won && caseData.epilogue.length > 0) {
+        setDialogueIndex(0)
+        setPhase('epilogue')
+        return
+      }
+      const lines = caseData.endingWrong
       setDialogueIndex(Math.max(0, lines.length - 1))
+      return
+    }
+
+    if (phase === 'epilogue') {
+      setDialogueIndex(Math.max(0, caseData.epilogue.length - 1))
     }
   }, [caseData, phase, won])
 
@@ -547,6 +573,7 @@ export function useTrialGame() {
     setFeedback,
     reset,
     startPrologue,
+    startEpilogue,
     advanceDialogue,
     openDailyScene,
     closeDailyScene,

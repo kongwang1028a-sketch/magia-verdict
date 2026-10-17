@@ -50,5 +50,6 @@ export function assembleCase(bundle: any): CaseData {
     statements,
     endingTruth: [...longStory.endingTruth],
     endingWrong: [...longStory.endingWrong],
+    epilogue: [...(longStory.epilogue ?? [])],
   }
 }

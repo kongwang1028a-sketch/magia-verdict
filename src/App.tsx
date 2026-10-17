@@ -3,6 +3,7 @@ import { AccusationScreen } from './components/AccusationScreen'
 import { Atmosphere } from './components/Atmosphere'
 import { DailyScreen } from './components/DailyScreen'
 import { EndingScreen } from './components/EndingScreen'
+import { EpilogueScreen } from './components/EpilogueScreen'
 import { IncidentScreen } from './components/IncidentScreen'
 import { InvestigationScreen } from './components/InvestigationScreen'
 import { PrologueScreen } from './components/PrologueScreen'
@@ -76,6 +77,7 @@ export default function App() {
           {phase === 'trial' && <TrialScreen game={loaded} />}
           {phase === 'accusation' && <AccusationScreen game={loaded} />}
           {phase === 'ending' && <EndingScreen game={loaded} />}
+          {phase === 'epilogue' && <EpilogueScreen game={loaded} />}
         </motion.div>
       </AnimatePresence>
     </div>
