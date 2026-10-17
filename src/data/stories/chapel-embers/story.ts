@@ -1,5 +1,7 @@
 /** 【封存】祈禱堂的餘燼 — 手寫粉絲向劇本：十三人全員登場。無灌水占位。劇情非本篇。 */
 export const longStory = {
+  /** 含 8 場關鍵；另可選 2 場選修換筆記 */
+  dailyVisitLimit: 10,
   prologue: [
     { speakerId: 'narrator', text: '海霧低得像要壓塌石牆。魔女島監牢在霧裡只露出一排鐵窗，窗裡的燈一明一滅。' },
     { speakerId: 'narrator', text: '十三名預備魔女被關在這裡。告示寫著：體內有魔女因子。告示沒寫的是——恐懼會怎麼改寫人。' },
@@ -30,6 +32,8 @@ export const longStory = {
       place: '食堂',
       summary: '漢娜、梅露露、米莉亞與可可',
       spot: 'left-[18%] top-[22%]',
+      priority: 'key' as const,
+      note: '梅露露手帕極重要；漢娜今晚仍去祈禱堂；可可看不見東翼牆後。',
       lines: [
         { speakerId: 'narrator', text: '食堂長桌永遠擦不乾淨。湯蒸汽模糊了窗。遠野漢娜敲著木碗，佐伯米莉亞縮在旁邊，澤渡可可則把湯匙當麥克風。' },
         { speakerId: 'hanna', text: '這餐具也太寒酸了吧？本小姐在家用銀器——咳，風格問題！' },
@@ -53,6 +57,8 @@ export const longStory = {
       place: '中庭',
       summary: '亞里沙、雪莉、諾亞',
       spot: 'left-[50%] top-[20%]',
+      priority: 'key' as const,
+      note: '亞里沙自稱整晚待中庭。安安寫：漢娜說今晚東翼。',
       lines: [
         { speakerId: 'narrator', text: '中庭石磚有新裂縫。紫藤亞里沙甩火，橘雪莉單手舉起斷落的石塊，城崎諾亞在一旁用污水畫圈。' },
         { speakerId: 'arisa', text: '離遠點！火要燒得漂亮。' },
@@ -75,6 +81,8 @@ export const longStory = {
       place: '守衛室前',
       summary: '蕾雅接下夜勤，奈葉香旁聽',
       spot: 'left-[82%] top-[22%]',
+      priority: 'key' as const,
+      note: '蕾雅稱午夜後仍會寫日誌。紙角殘筆「別寫」。奈葉香：有一頁特別燙。',
       lines: [
         { speakerId: 'narrator', text: '守衛室門半掩。蓮見蕾雅轉著筆，黑部奈葉香靠牆，目光像在看別的時間。' },
         { speakerId: 'reia', text: '今晚查勤我來。異狀就叫我，別逞英雄。' },
@@ -97,6 +105,8 @@ export const longStory = {
       place: '交誼廳',
       summary: '瑪格模仿眾人，可可吐槽',
       spot: 'left-[18%] top-[48%]',
+      priority: 'optional' as const,
+      note: '瑪格學舌散播恐慌。可可感覺有視線。瑪格勸別去東翼。',
       lines: [
         { speakerId: 'narrator', text: '交誼廳有一張掉漆的沙發。寶生瑪格站在桌緣，用別人的聲音逗笑——或刺傷——周圍的人。' },
         { speakerId: 'margo', text: '「這餐具也太寒酸了吧？」——怎麼樣，像不像漢娜？' },
@@ -119,6 +129,8 @@ export const longStory = {
       place: '東翼祈禱堂',
       summary: '漢娜談窗栓，諾亞看彩窗',
       spot: 'left-[50%] top-[48%]',
+      priority: 'key' as const,
+      note: '窗栓外側可能碰得到。諾亞見外側雨跡。漢娜衣角帶微焦味。',
       lines: [
         { speakerId: 'narrator', text: '東翼祈禱堂比想像中安靜。彩窗碎光落在祭壇上。漢娜浮起又落下，諾亞仰頭看玻璃裡的顏色。' },
         { speakerId: 'hanna', text: '還算體面。今晚本小姐會再來靜心。' },
@@ -140,6 +152,8 @@ export const longStory = {
       place: '西迴廊',
       summary: '艾瑪與希羅整理情報',
       spot: 'left-[82%] top-[48%]',
+      priority: 'optional' as const,
+      note: '整理聲稱：祈禱堂、整晚中庭、夜勤、手帕、東翼、視線、燙頁。',
       lines: [
         { speakerId: 'narrator', text: '西迴廊風口終年不停。兩人把今天的話拆成條目。' },
         { speakerId: 'ema', text: '漢娜會去祈禱堂；亞里沙說整晚在中庭；蕾雅掌夜勤；梅露露的手帕很重要；安安寫了東翼；可可感覺到視線；奈葉香說日誌有一頁很燙。' },
@@ -158,6 +172,8 @@ export const longStory = {
       place: '牢房區',
       summary: '眾人回房，不安蔓延',
       spot: 'left-[18%] top-[75%]',
+      priority: 'optional' as const,
+      note: '安安：走廊有人停太久、腳步輕。奈葉香拒絕開門。',
       lines: [
         { speakerId: 'narrator', text: '就寢鐘把對話砍斷。門一道道關上。' },
         { speakerId: 'meruru', text: '手帕還在……太好了……' },
@@ -176,6 +192,8 @@ export const longStory = {
       place: '點名廣場',
       summary: '違規離房警告，全員到齊',
       spot: 'left-[50%] top-[75%]',
+      priority: 'optional' as const,
+      note: '昨夜有人違規離房。奈葉香：有人未來在點名簿斷了一截。',
       lines: [
         { speakerId: 'narrator', text: '第二日的霧更濃。十三人在廣場排成歪斜的兩列。' },
         { speakerId: 'owl', text: '昨夜有人違規離房。姓名暫不公布。余等看著。' },
@@ -199,6 +217,8 @@ export const longStory = {
       place: '後廚',
       summary: '焦味，雪莉與蕾雅',
       spot: 'left-[82%] top-[75%]',
+      priority: 'key' as const,
+      note: '後廚焦味像布料被燎。諾亞：焦油溶水後牆會留膜。',
       lines: [
         { speakerId: 'narrator', text: '後廚排氣口殘留焦味，不像食物，比較像布料被燎過。' },
         { speakerId: 'reia', text: '日誌沒寫有人進來。可味道騙不了人。' },
@@ -218,6 +238,8 @@ export const longStory = {
       place: '禁書室',
       summary: '安安素描，奈葉香觸紙',
       spot: 'left-[34%] top-[34%]',
+      priority: 'key' as const,
+      note: '安安：第二夜前東翼、手上有布。奈葉香警告有人會撕本子。',
       lines: [
         { speakerId: 'narrator', text: '禁書室書很少，灰很多。安安推來素描本，奈葉香只碰封面就收回手。' },
         { speakerId: 'anan', text: '（素描本：吾輩寫——第一夜火在中庭。第二夜前：東翼，手上有布。）' },
@@ -237,6 +259,8 @@ export const longStory = {
       place: '中庭',
       summary: '追問亞里沙的「整晚」',
       spot: 'left-[66%] top-[34%]',
+      priority: 'key' as const,
+      note: '雪莉凌晨沒看見亞里沙。諾亞見焦心旁水線斷裂。',
       lines: [
         { speakerId: 'narrator', text: '亞里沙仍守在燒痕旁。雪莉遠觀，瑪格靠柱子嗑並不存在的瓜子。' },
         { speakerId: 'hiro', text: '你說整晚都在中庭。舉得出名字的證人呢？' },
@@ -257,6 +281,8 @@ export const longStory = {
       place: '東翼走廊',
       summary: '漢娜堅持赴祈禱堂',
       spot: 'left-[50%] top-[62%]',
+      priority: 'optional' as const,
+      note: '漢娜執意再去祈禱堂。米莉亞要叫蕾雅。',
       lines: [
         { speakerId: 'narrator', text: '黃昏把東翼染成鏽紅。漢娜整理衣領，梅露露揪著手帕角，米莉亞幾乎要哭出來。' },
         { speakerId: 'hanna', text: '今晚還是去。誰勸都沒用。' },
@@ -276,6 +302,8 @@ export const longStory = {
       place: '守衛室',
       summary: '蕾雅收到威脅',
       spot: 'left-[20%] top-[60%]',
+      priority: 'key' as const,
+      note: '蕾雅：有些字寫出來會害死下一個人。奈葉香：紙條的未來是灰。',
       lines: [
         { speakerId: 'narrator', text: '守衛室多了一張摺皺紙條。蕾雅塞進袖裡，動作快得像滅火。奈葉香站在門外，沒進來。' },
         { speakerId: 'reia', text: '今晚若我改了寫法，先別定罪。有些字寫出來，會害死下一個人。' },
@@ -293,6 +321,8 @@ export const longStory = {
       place: '中庭邊緣',
       summary: '全員氣氛緊繃',
       spot: 'left-[70%] top-[60%]',
+      priority: 'optional' as const,
+      note: '諾亞：門口水氣升高像熱源靠近。安安寫：熱、布、東翼。',
       lines: [
         { speakerId: 'narrator', text: '黃昏最後一點光被霧吃掉。十三人分散在中庭邊緣，像一盤被打亂的棋。' },
         { speakerId: 'sherry', text: '我說啊，要不要比腕力決定誰去陪漢娜？我贏的話——' },
@@ -433,6 +463,7 @@ export const longStory = {
       id: 's1',
       speakerId: 'reia',
       text: '查勤在午夜就結束了。之後我回房睡覺，整晚什麼都沒看見、也沒聽到。',
+      lieToken: '查勤在午夜就結束了',
       correctEvidenceId: 'watch-log',
       wrongHint: '無法證明查勤結束時間。找與時間有關的紀錄。',
       intro: [
@@ -453,6 +484,7 @@ export const longStory = {
       id: 's2',
       speakerId: 'meruru',
       text: '那、那條手帕不是我的！我、我怎麼可能出現在祈禱堂……',
+      lieToken: '那條手帕不是我的',
       correctEvidenceId: 'handkerchief',
       wrongHint: '需要能證明手帕歸屬的證物。',
       intro: [
@@ -472,6 +504,7 @@ export const longStory = {
       id: 's3',
       speakerId: 'arisa',
       text: '哈？我整晚都在中庭好嗎，很多人看見。誰要去那個破祈禱堂啊。',
+      lieToken: '我整晚都在中庭好嗎',
       correctEvidenceId: 'boot-prints',
       wrongHint: '核對足跡能否支撐「整晚在中庭」。',
       intro: [
@@ -492,6 +525,7 @@ export const longStory = {
       id: 's4',
       speakerId: 'arisa',
       text: '就算有燒痕，也可能是燭火或漢娜自己搞的。外面的人進得了上鎖的祈禱堂嗎？',
+      lieToken: '外面的人進得了上鎖的祈禱堂嗎',
       correctEvidenceId: 'window-scorch',
       wrongHint: '檢查門窗外側痕跡，確認能否外部攻擊。',
       intro: [

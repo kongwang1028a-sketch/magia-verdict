@@ -16,12 +16,18 @@ export function DailyScreen({ game }: Props) {
     closeDailyScene,
     advanceDialogue,
     finishDaily,
+    keyDailyDone,
+    visitsRemaining,
+    feedback,
   } = game
 
   const active = caseData.dailyScenes.find((s) => s.id === activeDailyId)
-  const allDone = visitedDaily.size >= caseData.dailyScenes.length
   const day1 = caseData.dailyScenes.filter((s) => s.id.startsWith('d1-'))
   const day2 = caseData.dailyScenes.filter((s) => s.id.startsWith('d2-'))
+  const keyTotal = caseData.dailyScenes.filter((s) => (s.priority ?? 'key') === 'key').length
+  const keyDone = caseData.dailyScenes.filter(
+    (s) => (s.priority ?? 'key') === 'key' && visitedDaily.has(s.id),
+  ).length
 
   return (
     <section className="relative mx-auto min-h-dvh max-w-5xl px-4 py-10 sm:px-6">
@@ -30,42 +36,58 @@ export function DailyScreen({ game }: Props) {
           DAILY LIFE
         </p>
         <h2 className="mt-1 font-[family-name:var(--font-serif)] text-2xl font-bold">
-          監牢日常 · 兩日篇
+          監牢日常 · 限次探訪
         </h2>
         <p className="mt-2 max-w-2xl text-sm leading-7 text-[var(--parchment-dim)]">
-          依序與各地點交談。聽完第一日與第二日全部場景後，即可進入夜晚事件。對話可點擊前進。
+          行動力有限：標「關鍵」的地點必須探訪才能進入夜晚；其餘為選修，可換取推理筆記。已探訪過的場景可重聽，不消耗次數。
         </p>
-        <p className="mt-3 text-sm text-[var(--candle)]">
-          已交談 {visitedDaily.size}/{caseData.dailyScenes.length}
-        </p>
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-[var(--candle)]">
+          <span>
+            行動力剩餘 {visitsRemaining}/{caseData.dailyVisitLimit}
+          </span>
+          <span>
+            關鍵 {keyDone}/{keyTotal}
+          </span>
+          <span>
+            已探訪 {visitedDaily.size}
+          </span>
+        </div>
       </header>
 
       <DaySection
         label="第一日"
         scenes={day1}
         visitedDaily={visitedDaily}
+        visitsRemaining={visitsRemaining}
+        visitLimit={caseData.dailyVisitLimit}
         onOpen={openDailyScene}
       />
       <DaySection
         label="第二日"
         scenes={day2}
         visitedDaily={visitedDaily}
+        visitsRemaining={visitsRemaining}
+        visitLimit={caseData.dailyVisitLimit}
         onOpen={openDailyScene}
         className="mt-6"
       />
 
+      {feedback?.kind === 'info' && (
+        <p className="mt-4 text-sm text-[var(--candle)]">{feedback.text}</p>
+      )}
+
       <div className="mt-8 flex flex-wrap gap-3">
         <button
           type="button"
-          disabled={!allDone}
+          disabled={!keyDailyDone}
           onClick={finishDaily}
           className={`px-8 py-3 text-sm tracking-[0.18em] transition ${
-            allDone
+            keyDailyDone
               ? 'bg-[var(--blood)] text-[var(--parchment)] hover:bg-[var(--blood-bright)]'
               : 'cursor-not-allowed bg-[color-mix(in_srgb,var(--iron)_35%,transparent)] text-[var(--iron)]'
           }`}
         >
-          {allDone ? '進入夜晚' : '尚有未交談的場景'}
+          {keyDailyDone ? '進入夜晚' : '尚有關鍵地點未探訪'}
         </button>
       </div>
 
@@ -86,6 +108,11 @@ export function DailyScreen({ game }: Props) {
               <p className="mb-3 font-[family-name:var(--font-serif)] text-lg font-bold">
                 {active.title}
                 <span className="ml-2 text-sm font-normal text-[var(--iron)]">{active.place}</span>
+                {(active.priority ?? 'key') === 'key' ? (
+                  <span className="ml-2 text-xs tracking-wider text-[var(--blood-bright)]">關鍵</span>
+                ) : (
+                  <span className="ml-2 text-xs tracking-wider text-[var(--candle)]">選修</span>
+                )}
               </p>
               <DialogueBox
                 lines={active.lines}
@@ -111,12 +138,16 @@ function DaySection({
   label,
   scenes,
   visitedDaily,
+  visitsRemaining,
+  visitLimit,
   onOpen,
   className = '',
 }: {
   label: string
   scenes: LoadedTrialGame['caseData']['dailyScenes']
   visitedDaily: Set<string>
+  visitsRemaining: number
+  visitLimit: number
   onOpen: (id: string) => void
   className?: string
 }) {
@@ -134,21 +165,39 @@ function DaySection({
       <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {scenes.map((scene) => {
           const done = visitedDaily.has(scene.id)
+          const isKey = (scene.priority ?? 'key') === 'key'
+          const locked = !done && visitsRemaining <= 0
           return (
             <button
               key={scene.id}
               type="button"
+              disabled={locked}
               onClick={() => onOpen(scene.id)}
               className={`ornament-border p-4 text-left transition ${
                 done
                   ? 'border-[color-mix(in_srgb,var(--candle)_45%,transparent)] text-[var(--candle)]'
-                  : 'hover:border-[var(--blood-bright)]'
+                  : locked
+                    ? 'cursor-not-allowed opacity-45'
+                    : 'hover:border-[var(--blood-bright)]'
               }`}
             >
-              <p className="text-xs tracking-wider text-[var(--iron)]">{scene.place}</p>
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs tracking-wider text-[var(--iron)]">{scene.place}</p>
+                <span
+                  className={`text-[10px] tracking-wider ${
+                    isKey ? 'text-[var(--blood-bright)]' : 'text-[var(--candle)]'
+                  }`}
+                >
+                  {isKey ? '關鍵' : '選修'}
+                </span>
+              </div>
               <p className="mt-1 font-[family-name:var(--font-serif)] font-medium">{scene.title}</p>
               <p className="mt-2 text-xs leading-5 text-[var(--parchment-dim)]">
-                {done ? '已聽完' : scene.summary}
+                {done
+                  ? '已聽完 · 可重聽'
+                  : locked
+                    ? `行動力已用盡（上限 ${visitLimit}）`
+                    : scene.summary}
               </p>
             </button>
           )

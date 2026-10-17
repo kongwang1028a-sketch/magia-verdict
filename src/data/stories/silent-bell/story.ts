@@ -73,6 +73,8 @@ export const storyMeta = {
 } as const
 
 export const longStory = {
+  /** 含 5 場關鍵；另可選 2 場選修換筆記 */
+  dailyVisitLimit: 7,
   prologue: [
     L('narrator', '牢屋敷的北翼靠近海。潮聲上來時，銅鐘會輕輕發顫——像還記得自己該響。'),
     L('ema', '那、那個……二階堂同學。早、早安。霧比較淡，鐘樓尖頂都看得見呢。'),
@@ -99,11 +101,13 @@ export const longStory = {
       place: '中庭',
       summary: '諾亞調色；瑪格起鬨；亞里沙發火',
       spot: 'left-[20%] top-[28%]',
+      priority: 'optional' as const,
+      note: '諾亞說若有人叫她，會先確認是誰。瑪格愛用別人的聲音取樂。',
       lines: [
         L('narrator', '中庭石桌上擺著稀釋過的顏料。城崎諾亞用指尖撥水，紋路慢得像不屬於這座牢。'),
         L('noa', '霧水比較乾淨……適合畫「還不能說出口的話」。'),
         L('ema', '不能說出口……？好漂亮的說法。'),
-        L('noa', '說出口就不是畫了。 ——你的表情很吵，顏色會混濁喔。'),
+        L('noa', '說出口就不是畫了。你的表情很吵，顏色會混濁喔。'),
         L('ema', '咦、咦？我、我很吵嗎……對不起……'),
         L('margo', '哎呀～別道歉啦艾瑪。來，我用「希羅的聲音」安慰你？「別用那種語氣。」——如何？'),
         L('hiro', '收起來。把別人的聲音當玩具，不正確。'),
@@ -125,6 +129,8 @@ export const longStory = {
       place: '食堂',
       summary: '漢娜嫌棄；米莉亞怯場；可可切換人格',
       spot: 'left-[50%] top-[24%]',
+      priority: 'optional' as const,
+      note: '蕾雅夜勤不含北翼尖頂。可可有「配信臉」與毒舌兩面。',
       lines: [
         L('narrator', '食堂永遠吵。遠野漢娜用湯匙敲碗，佐伯米莉亞把麵包掰得很碎，澤渡可可把空碗當麥克風。'),
         L('hanna', '這湯是在懲罰人的品位嗎？本小姐在家——咳，風格問題！'),
@@ -147,6 +153,8 @@ export const longStory = {
       place: '鐘樓底部',
       summary: '雪莉試驗；奈葉香獨行；安安筆談',
       spot: 'left-[80%] top-[28%]',
+      priority: 'optional' as const,
+      note: '雪莉試過鐘繩卻無聲。安安寫：吾輩看見繩、笑、無聲。',
       lines: [
         L('narrator', '鐘樓底部陰涼。橘雪莉掂著鐘繩，黑部奈葉香停在第一級階梯，沒有上去。'),
         L('sherry', '繩子意外結實～輕輕一扯，鐘沒響，及格！名偵探滿分。'),
@@ -169,6 +177,8 @@ export const longStory = {
       place: '交誼廳',
       summary: '瑪格學舌；米莉亞的誤聽',
       spot: 'left-[20%] top-[55%]',
+      priority: 'key' as const,
+      note: '米莉亞傍晚聽見「希羅」叫諾亞，但希羅當時在食堂——偽聲嫌疑。奈葉香：重複的聲音最危險。',
       lines: [
         L('narrator', '交誼廳沙發塌了一角。寶生瑪格站在燈下，忽然換成另一道聲線。'),
         L('margo', '「別用那種語氣叫我。」——怎麼樣？像不像我們冷冰冰的二階堂希羅？'),
@@ -190,6 +200,8 @@ export const longStory = {
       place: '牢房區',
       summary: '暗號與拒絕親近',
       spot: 'left-[50%] top-[58%]',
+      priority: 'key' as const,
+      note: '暗號「月代」。諾亞會先問暗號再應門。漢娜說不上髒樓。',
       lines: [
         L('narrator', '就寢鐘把對話砍斷。門一扇扇關上。'),
         L('ema', '諾亞……請別一個人上鐘樓。如果害怕，可以叫我……'),
@@ -210,6 +222,8 @@ export const longStory = {
       place: '點名廣場',
       summary: '黎明的鐘沒有響',
       spot: 'left-[80%] top-[55%]',
+      priority: 'key' as const,
+      note: '第二日黎明銅鐘未響。諾亞：有人用希羅的聲音叫她，因暗號不對而未應。',
       lines: [
         L('narrator', '第二日黎明，銅鐘沒有響。廣場上的人互看，像在等一句遲來的台詞。'),
         L('owl', '鐘樓異常。余等稍後處置。點名照常。'),
@@ -230,6 +244,8 @@ export const longStory = {
       place: '工作間',
       summary: '缺藍與未還手套',
       spot: 'left-[25%] top-[78%]',
+      priority: 'key' as const,
+      note: '藍顏料失竊。工作手套午後領出未歸還，領名被擦。安安：吾輩看見藍、樓、笑。',
       lines: [
         L('narrator', '工作間堆著舊布與空罐。諾亞清點顏料，少了一小罐藍。'),
         L('noa', '藍不見了。那罐最容易在夜霧裡發亮。'),
@@ -249,6 +265,8 @@ export const longStory = {
       place: '北迴廊',
       summary: '偽聲與笑聲',
       spot: 'left-[55%] top-[78%]',
+      priority: 'key' as const,
+      note: '偽聲結尾有很輕的笑（奈葉香）。希羅與艾瑪當下在食堂，漢娜可作證。',
       lines: [
         L('narrator', '北迴廊通向鐘樓。風帶著銅腥鑽進石縫。'),
         L('hiro', '米莉亞聽見「我的聲音」叫諾亞時，我與艾瑪在食堂。漢娜也在。'),
@@ -271,6 +289,8 @@ export const longStory = {
       place: '中庭邊緣',
       summary: '出發前的緊繃',
       spot: 'left-[80%] top-[78%]',
+      priority: 'optional' as const,
+      note: '約定二十分鐘內下樓。安安寫：二十分鐘不夠。蕾雅夜勤仍不含尖頂。',
       lines: [
         L('narrator', '黃昏把銅鐘染成暗赭。十三人散在中庭邊緣，像被打亂又強行擺正的棋。'),
         L('arisa', '一群神神祕祕。鐘樓要塌的話讓我燒爽一點。'),
@@ -414,6 +434,7 @@ export const longStory = {
       id: 's1',
       speakerId: 'coco',
       text: '別看我。鐘樓裡外我都看得到，什麼可疑的人都沒有。千里眼超強，懂？',
+      lieToken: '鐘樓裡外我都看得到',
       correctEvidenceId: 'coco-angle',
       wrongHint: '她的能力範圍與這句話衝突。回想詢問筆錄。',
       intro: [
@@ -431,6 +452,7 @@ export const longStory = {
       id: 's2',
       speakerId: 'sherry',
       text: '欄杆那樣彎，除了我誰做得到？所以你們一定覺得是我——隨便啦。反正我整晚都在中庭舉石玩。',
+      lieToken: '除了我誰做得到',
       correctEvidenceId: 'gloves',
       wrongHint: '現場有嫁禍怪力的痕跡。找「隔着手套」的物證。',
       intro: [
@@ -448,6 +470,7 @@ export const longStory = {
       id: 's3',
       speakerId: 'nanoka',
       text: '我什麼都沒做。我也沒聽到什麼聲音。幻視很吵，所以我整晚堵住耳朵。',
+      lieToken: '我也沒聽到什麼聲音',
       correctEvidenceId: 'false-voice',
       wrongHint: '她其實提過結尾帶笑的偽聲。找偽聲相關證言。',
       intro: [
@@ -465,6 +488,7 @@ export const longStory = {
       id: 's4',
       speakerId: 'margo',
       text: '哈，所以怎樣？學聲音又不會殺人。我整晚待在交誼廳睡覺，誰都沒看見我不在。鐘不會響，關我什麼事？',
+      lieToken: '鐘不會響，關我什麼事',
       correctEvidenceId: 'mute-bell',
       wrongHint: '讓鐘無法發聲的布料來自交誼廳。把「無聲」與她的範圍連起來。',
       intro: [

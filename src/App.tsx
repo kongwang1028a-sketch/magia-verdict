@@ -6,6 +6,7 @@ import { EndingScreen } from './components/EndingScreen'
 import { IncidentScreen } from './components/IncidentScreen'
 import { InvestigationScreen } from './components/InvestigationScreen'
 import { PrologueScreen } from './components/PrologueScreen'
+import { NotebookPanel } from './components/NotebookPanel'
 import { SkipChapterButton } from './components/SkipChapterButton'
 import { TitleScreen } from './components/TitleScreen'
 import { TrialScreen } from './components/TrialScreen'
@@ -49,6 +50,7 @@ export default function App() {
         disabled={!loaded.canSkipChapter}
         onClick={loaded.skipChapter}
       />
+      <NotebookPanel game={loaded} />
       <AnimatePresence mode="wait">
         <motion.div
           key={`${game.storyId}-${phase}`}

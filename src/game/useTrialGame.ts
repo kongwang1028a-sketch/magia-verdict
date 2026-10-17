@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { loadCase } from '../data/loadCase'
 import { DEFAULT_STORY_ID, STORY_CATALOG, STORY_STORAGE_KEY } from '../data/stories/catalog'
-import type { CaseData, EvidenceId, Phase, SuspectId } from './types'
+import type { CaseData, EvidenceId, NotebookEntry, Phase, SuspectId } from './types'
 
 function readStoredStoryId(): string {
   try {
@@ -22,10 +22,13 @@ export function useTrialGame() {
   const [visitedDaily, setVisitedDaily] = useState<Set<string>>(new Set())
   const [activeDailyId, setActiveDailyId] = useState<string | null>(null)
   const [collected, setCollected] = useState<Set<EvidenceId>>(new Set())
+  const [notebook, setNotebook] = useState<NotebookEntry[]>([])
+  const [notebookOpen, setNotebookOpen] = useState(false)
   const [statementIndex, setStatementIndex] = useState(0)
   const [brokenIds, setBrokenIds] = useState<Set<string>>(new Set())
   const [mistakes, setMistakes] = useState(0)
   const [selectedEvidence, setSelectedEvidence] = useState<EvidenceId | null>(null)
+  const [selectedLieToken, setSelectedLieToken] = useState<string | null>(null)
   const [feedback, setFeedback] = useState<{
     kind: 'success' | 'error' | 'info'
     text: string
@@ -47,10 +50,13 @@ export function useTrialGame() {
     setVisitedDaily(new Set())
     setActiveDailyId(null)
     setCollected(new Set())
+    setNotebook([])
+    setNotebookOpen(false)
     setStatementIndex(0)
     setBrokenIds(new Set())
     setMistakes(0)
     setSelectedEvidence(null)
+    setSelectedLieToken(null)
     setFeedback(null)
     setRevealLineIndex(0)
     setAccusedId(null)
@@ -95,10 +101,26 @@ export function useTrialGame() {
   const livesLeft = caseData ? caseData.maxMistakes - mistakes : 0
   const failedByMistakes = caseData ? mistakes >= caseData.maxMistakes : false
 
+  const keyDailyIds = useMemo(() => {
+    if (!caseData) return [] as string[]
+    return caseData.dailyScenes.filter((s) => (s.priority ?? 'key') === 'key').map((s) => s.id)
+  }, [caseData])
+
+  const keyDailyDone = useMemo(
+    () => keyDailyIds.every((id) => visitedDaily.has(id)),
+    [keyDailyIds, visitedDaily],
+  )
+
+  const visitsRemaining = caseData
+    ? Math.max(0, caseData.dailyVisitLimit - visitedDaily.size)
+    : 0
+
   const progress = useMemo(() => {
     if (!caseData) return 0
     if (phase === 'daily') {
-      return Math.round((visitedDaily.size / caseData.dailyScenes.length) * 100)
+      const need = Math.max(1, keyDailyIds.length)
+      const keyed = keyDailyIds.filter((id) => visitedDaily.has(id)).length
+      return Math.round((keyed / need) * 100)
     }
     if (phase === 'investigation') {
       return Math.round((collected.size / caseData.evidence.length) * 100)
@@ -110,10 +132,18 @@ export function useTrialGame() {
   }, [
     caseData,
     phase,
-    visitedDaily.size,
+    visitedDaily,
+    keyDailyIds,
     collected.size,
     brokenIds.size,
   ])
+
+  const addNotebookEntry = useCallback((entry: NotebookEntry) => {
+    setNotebook((prev) => {
+      if (prev.some((e) => e.id === entry.id)) return prev
+      return [...prev, entry]
+    })
+  }, [])
 
   const reset = useCallback(() => {
     clearProgress()
@@ -156,28 +186,62 @@ export function useTrialGame() {
     }
   }, [caseData, phase, dialogueIndex, activeDailyId])
 
-  const openDailyScene = useCallback((id: string) => {
-    setActiveDailyId(id)
-    setDialogueIndex(0)
-  }, [])
+  const openDailyScene = useCallback(
+    (id: string) => {
+      if (!caseData) return
+      if (visitedDaily.has(id)) {
+        setActiveDailyId(id)
+        setDialogueIndex(0)
+        return
+      }
+      if (visitedDaily.size >= caseData.dailyVisitLimit) {
+        setFeedback({
+          kind: 'info',
+          text: '希羅：今日行動力用盡。先補齊關鍵地點，或直接進入夜晚。',
+        })
+        return
+      }
+      setFeedback(null)
+      setActiveDailyId(id)
+      setDialogueIndex(0)
+    },
+    [caseData, visitedDaily],
+  )
 
   const closeDailyScene = useCallback(() => {
-    if (!activeDailyId) return
+    if (!caseData || !activeDailyId) return
+    const scene = caseData.dailyScenes.find((s) => s.id === activeDailyId)
+    const wasNew = !visitedDaily.has(activeDailyId)
     setVisitedDaily((prev) => {
       const next = new Set(prev)
       next.add(activeDailyId)
       return next
     })
+    if (wasNew && scene?.note) {
+      addNotebookEntry({
+        id: `note-${scene.id}`,
+        kind: 'note',
+        title: scene.title,
+        body: scene.note,
+      })
+    }
     setActiveDailyId(null)
     setDialogueIndex(0)
-  }, [activeDailyId])
+  }, [caseData, activeDailyId, visitedDaily, addNotebookEntry])
 
   const finishDaily = useCallback(() => {
     if (!caseData) return
-    if (visitedDaily.size < caseData.dailyScenes.length) return
+    if (!keyDailyDone) {
+      setFeedback({
+        kind: 'info',
+        text: '艾瑪：還有標成「關鍵」的地點沒去……請先補齊。',
+      })
+      return
+    }
+    setFeedback(null)
     setDialogueIndex(0)
     setPhase('incident')
-  }, [caseData, visitedDaily.size])
+  }, [caseData, keyDailyDone])
 
   const dismissGate = useCallback(() => {
     if (!caseData) return
@@ -195,16 +259,29 @@ export function useTrialGame() {
     setDialogueIndex(0)
   }, [caseData, gateLines, dialogueIndex])
 
-  const collectEvidence = useCallback((id: EvidenceId) => {
-    setCollected((prev) => {
-      const next = new Set(prev)
-      next.add(id)
-      return next
-    })
-    setInspectId(id)
-    setDialogueIndex(0)
-    setPendingDiscover(true)
-  }, [])
+  const collectEvidence = useCallback(
+    (id: EvidenceId) => {
+      if (!caseData) return
+      const ev = caseData.evidence.find((e) => e.id === id)
+      setCollected((prev) => {
+        const next = new Set(prev)
+        next.add(id)
+        return next
+      })
+      if (ev) {
+        addNotebookEntry({
+          id: `ev-${ev.id}`,
+          kind: 'evidence',
+          title: ev.name,
+          body: `${ev.detail}（發現於：${ev.foundIn}）`,
+        })
+      }
+      setInspectId(id)
+      setDialogueIndex(0)
+      setPendingDiscover(true)
+    },
+    [caseData, addNotebookEntry],
+  )
 
   const closeInspect = useCallback(() => {
     if (!caseData) return
@@ -232,29 +309,42 @@ export function useTrialGame() {
     setGateLines('trial')
     setStatementIndex(0)
     setRevealLineIndex(0)
+    setSelectedLieToken(null)
     setPhase('trial')
   }, [caseData, collected.size])
 
   const attemptBreak = useCallback(() => {
     if (!caseData || !currentStatement) return
+    if (!selectedLieToken) {
+      setFeedback({ kind: 'info', text: '希羅：先圈出證詞裡的矛盾句，再選證據。' })
+      return
+    }
     if (!selectedEvidence) {
       setFeedback({ kind: 'info', text: '艾瑪：先選證據，再喊異議！' })
       return
     }
     if (brokenIds.has(currentStatement.id)) return
 
-    if (selectedEvidence === currentStatement.correctEvidenceId) {
+    const tokenOk = selectedLieToken === currentStatement.lieToken
+    const evidenceOk = selectedEvidence === currentStatement.correctEvidenceId
+
+    if (tokenOk && evidenceOk) {
       const nextBroken = new Set(brokenIds)
       nextBroken.add(currentStatement.id)
       setBrokenIds(nextBroken)
       setRevealLineIndex(0)
       setFeedback({ kind: 'success', text: '' })
       setSelectedEvidence(null)
+      setSelectedLieToken(null)
     } else {
       const nextMistakes = mistakes + 1
       setMistakes(nextMistakes)
-      setFeedback({ kind: 'error', text: currentStatement.wrongHint })
+      const hint = !tokenOk
+        ? '圈選的句子不對。再聽一遍，哪一句與證據衝突？'
+        : currentStatement.wrongHint
+      setFeedback({ kind: 'error', text: hint })
       setSelectedEvidence(null)
+      setSelectedLieToken(null)
       if (nextMistakes >= caseData.maxMistakes) {
         setWon(false)
         setAccusedId(null)
@@ -262,7 +352,14 @@ export function useTrialGame() {
         setPhase('ending')
       }
     }
-  }, [caseData, currentStatement, selectedEvidence, brokenIds, mistakes])
+  }, [
+    caseData,
+    currentStatement,
+    selectedEvidence,
+    selectedLieToken,
+    brokenIds,
+    mistakes,
+  ])
 
   const advanceAfterBreak = useCallback(() => {
     if (!caseData || !currentStatement || !brokenIds.has(currentStatement.id)) return
@@ -279,6 +376,7 @@ export function useTrialGame() {
     }
     setFeedback(null)
     setRevealLineIndex(0)
+    setSelectedLieToken(null)
     setStatementIndex((i) => Math.min(i + 1, caseData.statements.length - 1))
   }, [caseData, currentStatement, brokenIds, revealLineIndex])
 
@@ -331,9 +429,25 @@ export function useTrialGame() {
     }
 
     if (phase === 'daily') {
+      const notes: NotebookEntry[] = []
+      for (const scene of caseData.dailyScenes) {
+        if (scene.note) {
+          notes.push({
+            id: `note-${scene.id}`,
+            kind: 'note',
+            title: scene.title,
+            body: scene.note,
+          })
+        }
+      }
+      setNotebook((prev) => {
+        const ids = new Set(prev.map((e) => e.id))
+        return [...prev, ...notes.filter((n) => !ids.has(n.id))]
+      })
       setVisitedDaily(new Set(caseData.dailyScenes.map((s) => s.id)))
       setActiveDailyId(null)
       setDialogueIndex(0)
+      setFeedback(null)
       setPhase('incident')
       return
     }
@@ -346,6 +460,16 @@ export function useTrialGame() {
     }
 
     if (phase === 'investigation') {
+      const evNotes: NotebookEntry[] = caseData.evidence.map((ev) => ({
+        id: `ev-${ev.id}`,
+        kind: 'evidence' as const,
+        title: ev.name,
+        body: `${ev.detail}（發現於：${ev.foundIn}）`,
+      }))
+      setNotebook((prev) => {
+        const ids = new Set(prev.map((e) => e.id))
+        return [...prev, ...evNotes.filter((n) => !ids.has(n.id))]
+      })
       setCollected(new Set(caseData.evidence.map((e) => e.id)))
       setInspectId(null)
       setPendingDiscover(false)
@@ -356,6 +480,7 @@ export function useTrialGame() {
       setRevealLineIndex(0)
       setBrokenIds(new Set())
       setSelectedEvidence(null)
+      setSelectedLieToken(null)
       setPhase('trial')
       return
     }
@@ -364,6 +489,7 @@ export function useTrialGame() {
       setGateLines('none')
       setFeedback(null)
       setSelectedEvidence(null)
+      setSelectedLieToken(null)
       setBrokenIds(new Set(caseData.statements.map((s) => s.id)))
       setStatementIndex(Math.max(0, caseData.statements.length - 1))
       setRevealLineIndex(0)
@@ -377,6 +503,10 @@ export function useTrialGame() {
     }
   }, [caseData, phase, won])
 
+  const toggleNotebook = useCallback(() => {
+    setNotebookOpen((o) => !o)
+  }, [])
+
   return {
     storyId,
     stories: STORY_CATALOG,
@@ -388,6 +518,11 @@ export function useTrialGame() {
     visitedDaily,
     activeDailyId,
     collected,
+    notebook,
+    notebookOpen,
+    toggleNotebook,
+    keyDailyDone,
+    visitsRemaining,
     statementIndex,
     currentStatement,
     brokenIds,
@@ -395,6 +530,7 @@ export function useTrialGame() {
     livesLeft,
     failedByMistakes,
     selectedEvidence,
+    selectedLieToken,
     feedback,
     revealLineIndex,
     accusedId,
@@ -407,6 +543,7 @@ export function useTrialGame() {
     canSkipChapter,
     skipChapterLabel,
     setSelectedEvidence,
+    setSelectedLieToken,
     setFeedback,
     reset,
     startPrologue,

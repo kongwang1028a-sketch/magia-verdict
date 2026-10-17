@@ -11,25 +11,7 @@ export type Phase =
 export type EvidenceId = string
 export type SuspectId = string
 
-export type SpeakerId =
-  | string
-  | 'ema'
-  | 'hiro'
-  | 'hanna'
-  | 'owl'
-  | 'narrator'
-  | 'system'
-  | 'noa'
-  | 'miria'
-  | 'margo'
-  | 'nanoka'
-  | 'sherry'
-  | 'coco'
-  | 'yuki'
-  | 'meruru'
-  | 'reia'
-  | 'arisa'
-  | 'anan'
+export type SpeakerId = string
 
 export interface Evidence {
   id: EvidenceId
@@ -69,12 +51,18 @@ export interface DailyScene {
   summary: string
   spot: string
   lines: DialogueLine[]
+  /** key = 進入夜晚前必須探訪；optional = 消耗行動力換筆記 */
+  priority?: 'key' | 'optional'
+  /** 探訪後寫入推理筆記 */
+  note?: string
 }
 
 export interface Statement {
   id: string
   speakerId: SuspectId
   text: string
+  /** 證詞中必須圈選的矛盾片段 */
+  lieToken: string
   correctEvidenceId: EvidenceId
   reveal: DialogueLine[]
   wrongHint: string
@@ -96,6 +84,8 @@ export interface CaseData {
   cast: Character[]
   prologue: DialogueLine[]
   dailyScenes: DailyScene[]
+  /** 日常最多可探訪幾場（含 key） */
+  dailyVisitLimit: number
   incident: DialogueLine[]
   investigationIntro: DialogueLine[]
   trialIntro: DialogueLine[]
@@ -108,6 +98,12 @@ export interface StoryPackInfo {
   title: string
   subtitle: string
   blurb: string
-  /** 封存舊稿／現行稿等標籤 */
   tag: string
+}
+
+export interface NotebookEntry {
+  id: string
+  kind: 'note' | 'evidence'
+  title: string
+  body: string
 }

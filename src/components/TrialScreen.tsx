@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { DialogueBox } from './DialogueBox'
+import { splitStatementTokens } from '../game/statementTokens'
 import type { LoadedTrialGame } from '../game/useTrialGame'
 
 interface Props {
@@ -13,6 +14,8 @@ export function TrialScreen({ game }: Props) {
     brokenIds,
     selectedEvidence,
     setSelectedEvidence,
+    selectedLieToken,
+    setSelectedLieToken,
     attemptBreak,
     advanceAfterBreak,
     feedback,
@@ -33,6 +36,7 @@ export function TrialScreen({ game }: Props) {
   const showGate = gateLines === 'trial'
   const showIntro = !showGate && !isBroken && !feedback
   const revealLine = isBroken ? currentStatement.reveal[revealLineIndex] : null
+  const tokens = splitStatementTokens(currentStatement.text, currentStatement.lieToken)
 
   return (
     <section className="relative mx-auto min-h-dvh max-w-5xl px-4 py-10 sm:px-6">
@@ -44,7 +48,9 @@ export function TrialScreen({ game }: Props) {
           <h2 className="mt-1 font-[family-name:var(--font-serif)] text-2xl font-bold">
             審判辯論 · 第 {statementIndex + 1} / {caseData.statements.length} 輪
           </h2>
-          <p className="mt-1 text-xs text-[var(--parchment-dim)]">艾瑪異議 · 希羅支援</p>
+          <p className="mt-1 text-xs text-[var(--parchment-dim)]">
+            先圈選矛盾句 → 再出示證據 → 異議
+          </p>
         </div>
         <div className="flex items-center gap-2" aria-label={`剩餘容錯 ${livesLeft}`}>
           {Array.from({ length: caseData.maxMistakes }).map((_, i) => (
@@ -97,9 +103,36 @@ export function TrialScreen({ game }: Props) {
             >
               {speaker?.name}
             </h3>
-            <blockquote className="mt-5 border-l-2 border-[color-mix(in_srgb,var(--candle)_40%,transparent)] pl-4 font-[family-name:var(--font-serif)] text-base leading-8 text-[var(--parchment)] sm:text-lg">
-              「{currentStatement.text}」
+            <p className="mt-4 text-xs tracking-wider text-[var(--candle)]">
+              點擊圈選你認為矛盾的片段
+            </p>
+            <blockquote className="mt-3 border-l-2 border-[color-mix(in_srgb,var(--candle)_40%,transparent)] pl-4 font-[family-name:var(--font-serif)] text-base leading-8 text-[var(--parchment)] sm:text-lg">
+              「
+              {tokens.map((token, i) => {
+                const active = selectedLieToken === token
+                return (
+                  <button
+                    key={`${i}-${token}`}
+                    type="button"
+                    disabled={isBroken}
+                    onClick={() => setSelectedLieToken(token)}
+                    className={`mx-0.5 inline rounded-sm px-1 py-0.5 text-left transition ${
+                      active
+                        ? 'bg-[color-mix(in_srgb,var(--blood)_55%,transparent)] text-[var(--parchment)] underline decoration-2'
+                        : 'hover:bg-[color-mix(in_srgb,var(--candle)_22%,transparent)] hover:underline'
+                    } ${isBroken ? 'cursor-default opacity-80' : ''}`}
+                  >
+                    {token}
+                  </button>
+                )
+              })}
+              」
             </blockquote>
+            {selectedLieToken && !isBroken && (
+              <p className="mt-3 text-xs text-[var(--candle)]">
+                已圈選：「{selectedLieToken}」
+              </p>
+            )}
           </motion.div>
 
           <div className="mt-6">
