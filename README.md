@@ -36,8 +36,20 @@ npm run dev
 
 ```bash
 npm run build
+npm run build:pages   # 產出 GitHub Pages 用的 /magia-verdict/ 路徑
 npm run count:chars
 ```
+
+## GitHub Pages（手機可開的公開網頁）
+
+倉庫需在 **github.com** 上，並啟用 Pages（此專案已附 `.github/workflows/deploy-pages.yml`）：
+
+1. 在 GitHub 建立（或推送）同名倉庫 `magia-verdict`，建議設為 **Public**（免費方案才能用 Pages）。
+2. **Settings → Pages → Build and deployment → Source** 選 **GitHub Actions**。
+3. 推送 `main` 或 `develop` 後，Actions 會自動建置並發布。
+4. 網址約為：`https://<你的GitHub帳號>.github.io/magia-verdict/`
+
+若倉庫目前只在 Cursor Origin、尚未連到 github.com，請先在 GitHub 建庫並把遠端推上去，Pages 才會生效。
 
 ## 技術
 
